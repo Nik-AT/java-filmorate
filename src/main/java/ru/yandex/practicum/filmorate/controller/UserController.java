@@ -14,25 +14,25 @@ import java.util.Map;
 
 @RestController
 public class UserController {
-    private Map<Integer, User> userMap = new HashMap<>();
-    static int idUsers;
+    private Map<Long, User> userMap = new HashMap<>();
+    private static long idUsers;
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
-    void validation(User user) {
+    protected void validation(User user) {
         if (user.getEmail().isEmpty() || !(user.getEmail().contains("@"))) {
-            log.info("Не верный email");
+            log.warn("Не верный формат email = {}", user);
             throw new ValidationException("Не верный email");
         }
         if (user.getLogin().contains(" ") || user.getLogin().isEmpty()) {
-            log.info("Не верный логин");
+            log.warn("Логин пустой или содержит пробел = {}", user);
             throw new ValidationException("Не верный логин");
         }
         if (user.getBirthday().isAfter(LocalDate.now())) {
-            log.info("День Рождение не может быть в будущем");
+            log.warn("День Рождение не может быть в будущем = {}", user);
             throw new ValidationException("День Рождение не может быть в будущем");
         }
         if (user.getId() <= 0) {
-            log.info("Не верный id");
+            log.warn("Не верный id = {}", user);
             throw new ValidationException("Не верный id");
         }
         if (user.getName().isEmpty()) {
@@ -40,7 +40,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("users")
+    @PostMapping("/users")
     public User createUser(@RequestBody User user) {
         ++idUsers;
         user.setId(idUsers);
@@ -50,16 +50,16 @@ public class UserController {
         return user;
     }
 
-    @PutMapping("users")
+    @PutMapping("/users")
     public User updateUser(@RequestBody User user) {
-        int id = user.getId();
+        long id = user.getId();
         validation(user);
         userMap.put(id, user);
         log.info("Обновление пользователя: {}", user);
         return user;
     }
 
-    @GetMapping("users")
+    @GetMapping("/users")
     ArrayList<User> getUser() {
         return new ArrayList<>(userMap.values());
     }
