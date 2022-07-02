@@ -60,7 +60,7 @@ public class UserController {
     }
 
     @GetMapping("/users")
-    ArrayList<User> getUser() {
+    public ArrayList<User> getUser() {
         return new ArrayList<>(userMap.values());
     }
 }

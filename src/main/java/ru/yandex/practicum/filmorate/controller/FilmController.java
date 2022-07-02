@@ -19,7 +19,7 @@ public class FilmController {
     private static final Logger log = LoggerFactory.getLogger(FilmController.class);
 
     @GetMapping("/films")
-    ArrayList<Film> getFilm() {
+    public ArrayList<Film> getFilm() {
         return new ArrayList<>(filmMap.values());
     }
 
