@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 
@@ -17,14 +18,15 @@ public class FilmController {
     @Autowired
     private final FilmService filmService;
 
-    private static final Logger log = LoggerFactory.getLogger(FilmController.class);
-
     public FilmController(FilmService filmService) {
         this.filmService = filmService;
     }
 
+    private static final Logger log = LoggerFactory.getLogger(FilmController.class);
+
     @GetMapping("/films")
     public List<Film> getFilm() {
+        log.info("Список фильмов: {}", filmService.getFilm());
         return filmService.getFilm();
     }
 
@@ -37,7 +39,7 @@ public class FilmController {
 
     @PutMapping("/films")
     public Film updateFilm(@RequestBody Film film) {
-        validation(film);
+        validationToUpdateFilm(film);
         log.info("Обновление фильма: {}", film);
         return filmService.updateFilm(film);
     }
@@ -59,8 +61,10 @@ public class FilmController {
             log.warn("Продолжительность фильма отрицательная = {}", film);
             throw new ValidationException("Продолжительность фильма должна быть положительной");
         }
-        if (film.getId() < 0) {
-            log.warn("Не корректный id = {}", film);
+    }
+    private void validationToUpdateFilm(Film film) {
+        if (!(filmService.getFilmMap().containsKey(film.getId()))) {
+            log.warn("Не верный id = {}", film);
             throw new ValidationException("Не верный id");
         }
     }

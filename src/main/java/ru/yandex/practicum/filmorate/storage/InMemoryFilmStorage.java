@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.storage;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,5 +31,10 @@ public class InMemoryFilmStorage implements FilmStorage {
         long id = film.getId();
         filmMap.put(id, film);
         return film;
+    }
+
+    @Override
+    public Map<Long, Film> getFilmMap() {
+        return filmMap;
     }
 }
