@@ -2,44 +2,44 @@ package ru.yandex.practicum.filmorate.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 @RestController
 public class FilmController {
-    private final Map<Long, Film> filmMap = new HashMap();
-    private static long idFilms;
+    @Autowired
+    private final FilmService filmService;
 
     private static final Logger log = LoggerFactory.getLogger(FilmController.class);
 
+    public FilmController(FilmService filmService) {
+        this.filmService = filmService;
+    }
+
     @GetMapping("/films")
-    public ArrayList<Film> getFilm() {
-        return new ArrayList<>(filmMap.values());
+    public List<Film> getFilm() {
+        return filmService.getFilm();
     }
 
     @PostMapping("/films")
     public Film createFilm(@RequestBody Film film) {
-        idFilms++;
-        film.setId(idFilms);
         validation(film);
-        filmMap.put(idFilms, film);
         log.info("Создание фильма: {}", film);
-        return film;
+        return filmService.createFilm(film);
     }
 
     @PutMapping("/films")
     public Film updateFilm(@RequestBody Film film) {
-        long id = film.getId();
         validation(film);
-        filmMap.put(id, film);
         log.info("Обновление фильма: {}", film);
-        return film;
+        return filmService.updateFilm(film);
     }
 
     protected void validation(Film film) {
@@ -59,7 +59,7 @@ public class FilmController {
             log.warn("Продолжительность фильма отрицательная = {}", film);
             throw new ValidationException("Продолжительность фильма должна быть положительной");
         }
-        if (film.getId() <= 0) {
+        if (film.getId() < 0) {
             log.warn("Не корректный id = {}", film);
             throw new ValidationException("Не верный id");
         }
