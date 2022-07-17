@@ -12,7 +12,7 @@ import java.util.Map;
 @Service
 public class UserService {
     @Autowired
-    final UserStorage userStorage;
+    private final UserStorage userStorage;
 
 
     public UserService(UserStorage userStorage) {

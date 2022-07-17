@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.ArrayList;
@@ -18,12 +19,13 @@ import java.util.stream.Collectors;
 public class FilmService {
 
     @Autowired
-    final FilmStorage filmStorage;
+    private final FilmStorage filmStorage;
     @Autowired
-    UserStorage userStorage;
+    private final UserStorage userStorage;
 
-    public FilmService(InMemoryFilmStorage inMemoryFilmStorage) {
+    public FilmService(InMemoryFilmStorage inMemoryFilmStorage, InMemoryUserStorage inMemoryUserStorage) {
         this.filmStorage = inMemoryFilmStorage;
+        this.userStorage = inMemoryUserStorage;
     }
 
     public List<Film> getFilm() {
@@ -35,12 +37,11 @@ public class FilmService {
     }
 
     public Film updateFilm(Film film) {
-        // todo
         return filmStorage.updateFilm(film);
     }
 
     public Map<Long, Film> getFilmMap() {
-        return filmStorage.getFilmMap();
+        return filmStorage.getFilms();
     }
 
     public void addLikeToFilm(long id, long userId) {
