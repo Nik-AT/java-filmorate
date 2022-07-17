@@ -11,14 +11,12 @@ import java.util.Map;
 
 @Service
 public class UserService {
-    @Autowired
     private final UserStorage userStorage;
 
-
+    @Autowired
     public UserService(UserStorage userStorage) {
         this.userStorage = userStorage;
     }
-
 
     public User createUser(User user) {
         return userStorage.createUser(user);

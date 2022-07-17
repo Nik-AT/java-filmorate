@@ -14,9 +14,10 @@ import java.util.List;
 
 @RestController
 public class FilmController {
-    @Autowired
+
     private final FilmService filmService;
 
+    @Autowired
     public FilmController(FilmService filmService) {
         this.filmService = filmService;
     }
