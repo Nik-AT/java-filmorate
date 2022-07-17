@@ -4,11 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -30,6 +29,12 @@ public class FilmController {
         return filmService.getFilm();
     }
 
+    @GetMapping("/films/{id}")
+    public Film getFilmById(@PathVariable long id) {
+        log.info("Фильм с ИД: {}", filmService.getFilm());
+        return filmService.getFilmById(id);
+    }
+
     @PostMapping("/films")
     public Film createFilm(@RequestBody Film film) {
         validation(film);
@@ -42,6 +47,24 @@ public class FilmController {
         validationToUpdateFilm(film);
         log.info("Обновление фильма: {}", film);
         return filmService.updateFilm(film);
+    }
+
+    @PutMapping("/films/{id}/like/{userId}")
+    public void addLikeToFilm(@PathVariable long id, @PathVariable long userId) {
+        log.info(String.format("Фильм с ИД %d лайкнул пользователя с ИД %d", id, userId));
+        filmService.addLikeToFilm(id, userId);
+    }
+
+    @DeleteMapping("/films/{id}/like/{userId}")
+    public void deleteLike(@PathVariable long id, @PathVariable long userId) {
+        log.info(String.format("Фильм с ИД %d лайкнул пользователя с ИД %d", id, userId));
+        filmService.deleteLike(id, userId);
+    }
+
+    @GetMapping("/films/popular")
+    public List<Film> popularFilm(@RequestParam(defaultValue = "10", required = false) Integer count) {
+        log.info("Фильм по популярности: {}", filmService.popularFilm(count));
+        return filmService.popularFilm(count);
     }
 
     protected void validation(Film film) {
@@ -62,10 +85,11 @@ public class FilmController {
             throw new ValidationException("Продолжительность фильма должна быть положительной");
         }
     }
-    private void validationToUpdateFilm(Film film) {
+
+    protected void validationToUpdateFilm(Film film) {
         if (!(filmService.getFilmMap().containsKey(film.getId()))) {
             log.warn("Не верный id = {}", film);
-            throw new ValidationException("Не верный id");
+            throw new NotFoundException("Не верный id");
         }
     }
 }

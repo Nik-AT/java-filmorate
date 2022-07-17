@@ -14,4 +14,10 @@ public interface FilmStorage {
     Film updateFilm(Film film);
 
     Map<Long, Film> getFilmMap();
+
+    Film getFilmById(long id);
+
+    void addLike(Film filmById, User user);
+
+    void deleteLike(Film filmById, User user);
 }
