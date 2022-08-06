@@ -1,5 +1,5 @@
 
-# [![Typing SVG](https://readme-typing-svg.herokuapp.com?size=30&color=ADA8F7&background=9EE3FF00&center=true&vCenter=true&lines=JAVA+-+FILMORATE)](https://git.io/typing-svg)
+# [![Typing SVG](https://readme-typing-svg.herokuapp.com?size=30&color=4FB2AEFF&background=9EE3FF00&center=true&vCenter=true&lines=JAVA+-+FILMORATE+📹)](https://git.io/typing-svg)
 
 Java-Filmorate это backend - приложение для сервиса, которое работает с фильмами и оценками пользователей, 
 может возвращать топ фильмов, рекомендованных к просмотру. В данном приложении использованы следующие технологии: Spring, Lombok, PostgreSQL
