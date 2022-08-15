@@ -46,30 +46,35 @@ public class UserController {
 
     @GetMapping("/users/{id}")
     public User getUserById(@PathVariable long id) {
+        validationToUserById(id);
         log.info("Пользователь с Ид: {}", id);
         return userService.getUserById(id);
     }
 
     @PutMapping("/users/{userId}/friends/{friendId}")
     public void addFriend(@PathVariable long userId, @PathVariable long friendId) {
+        validationFriends(userId,friendId);
         log.info(String.format("Пользователь с ИД %d добавил в друзья пользователя с ИД %d", userId, friendId));
         userService.addFriend(userId, friendId);
     }
 
     @DeleteMapping("/users/{userId}/friends/{friendId}")
     public void deleteFriend(@PathVariable long userId, @PathVariable long friendId) {
+        validationFriends(userId, friendId);
         log.info(String.format("Пользователь с ИД %d удалил из друзей пользователя с ИД %d", userId, friendId));
         userService.deleteFriend(userId, friendId);
     }
 
     @GetMapping("/users/{id}/friends")
     public List<User> getUsersByFriend(@PathVariable long id) {
+        validationToUserById(id);
         log.info("Все друзья: {}", userService.getUsersByFriend(id));
         return userService.getUsersByFriend(id);
     }
 
     @GetMapping("/users/{id}/friends/common/{otherId}")
     public List<User> getFriendCommonByOther(@PathVariable long id, @PathVariable long otherId) {
+        validationFriends(id,otherId);
         log.info("Общие друзья: {}", userService.getUsersByFriend(id));
         return userService.getFriendCommonByOther(id, otherId);
     }
@@ -93,9 +98,26 @@ public class UserController {
     }
 
     protected void validationToUpdateUser(User user) {
-        if (!(userService.getUserMap().containsKey(user.getId())) || user.getId() < 0) {
+        if (user.getId() < 0) {
             log.warn("Не верный id = {}", user);
             throw new NotFoundException("Не верный id");
+        }
+    }
+    protected void validationToUserById(long id) {
+        if (id < 0) {
+            log.warn("Не верный id = {}", id);
+            throw new NotFoundException("Не верный id");
+        }
+
+    }
+    protected void validationFriends(long userId, long friendId) {
+        if (userId < 0) {
+            log.warn("Не верный id у user = {}", userId);
+            throw new NotFoundException("Не верный id " + userId);
+        }
+        if (friendId < 0) {
+            log.warn("Не верный id у friendId = {}", friendId);
+            throw new NotFoundException("Не верный id " + friendId);
         }
     }
 }
