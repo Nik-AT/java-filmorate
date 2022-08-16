@@ -6,9 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
-import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Rating;
-import ru.yandex.practicum.filmorate.service.GenreService;
 import ru.yandex.practicum.filmorate.service.RatingService;
 
 import java.util.List;
@@ -26,9 +24,10 @@ public class RatingController {
 
     @GetMapping("/mpa/{id}")
     public Rating getRatingById(@PathVariable int id) {
-        log.info("Жанр по ИД {}", ratingService.getRatingById(id));
+        log.info("Рейтинг по ИД {}", ratingService.getRatingById(id));
         return ratingService.getRatingById(id);
     }
+
     @GetMapping("/mpa")
     public List<Rating> getAllRating() {
         log.info("Все рейтинги {}", ratingService.getAllRating());

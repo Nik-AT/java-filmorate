@@ -30,7 +30,7 @@ public class UserDb implements UserStorage {
                 user.getName(),
                 user.getBirthday());
         sqlQuery = "SELECT USER_ID FROM USERS ORDER BY USER_ID DESC LIMIT 1";
-        Integer userId = jdbcTemplate.queryForObject(sqlQuery, Integer.class);
+        Long userId = jdbcTemplate.queryForObject(sqlQuery, Long.class);
         user.setId(userId);
         return getUserById(userId);
     }
@@ -81,13 +81,13 @@ public class UserDb implements UserStorage {
     }
 
     private User makeUser(ResultSet rs) throws SQLException {
-        User user = new User();
-        user.setId(rs.getInt("USER_ID"));
-        user.setEmail(rs.getString("EMAIL"));
-        user.setLogin(rs.getString("LOGIN"));
-        user.setName(rs.getString("NAME"));
-        user.setBirthday(LocalDate.parse(rs.getString("BIRTHDAY"),
+        User makeUser = new User();
+        makeUser.setId(rs.getInt("USER_ID"));
+        makeUser.setEmail(rs.getString("EMAIL"));
+        makeUser.setLogin(rs.getString("LOGIN"));
+        makeUser.setName(rs.getString("NAME"));
+        makeUser.setBirthday(LocalDate.parse(rs.getString("BIRTHDAY"),
                 DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-        return user;
+        return makeUser;
     }
 }

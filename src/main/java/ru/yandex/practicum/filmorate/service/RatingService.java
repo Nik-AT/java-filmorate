@@ -23,6 +23,7 @@ public class RatingService {
         }
         return ratingDb.getRatingById(id);
     }
+
     public List<Rating> getAllRating() {
         return ratingDb.getAllRating();
     }

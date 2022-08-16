@@ -53,7 +53,7 @@ public class UserController {
 
     @PutMapping("/users/{userId}/friends/{friendId}")
     public void addFriend(@PathVariable long userId, @PathVariable long friendId) {
-        validationFriends(userId,friendId);
+        validationFriends(userId, friendId);
         log.info(String.format("Пользователь с ИД %d добавил в друзья пользователя с ИД %d", userId, friendId));
         userService.addFriend(userId, friendId);
     }
@@ -74,7 +74,7 @@ public class UserController {
 
     @GetMapping("/users/{id}/friends/common/{otherId}")
     public List<User> getFriendCommonByOther(@PathVariable long id, @PathVariable long otherId) {
-        validationFriends(id,otherId);
+        validationFriends(id, otherId);
         log.info("Общие друзья: {}", userService.getUsersByFriend(id));
         return userService.getFriendCommonByOther(id, otherId);
     }
@@ -103,21 +103,22 @@ public class UserController {
             throw new NotFoundException("Не верный id");
         }
     }
+
     protected void validationToUserById(long id) {
         if (id < 0) {
             log.warn("Не верный id = {}", id);
-            throw new NotFoundException("Не верный id");
+            throw new NotFoundException("Не корректно введен id " + id);
         }
-
     }
+
     protected void validationFriends(long userId, long friendId) {
         if (userId < 0) {
             log.warn("Не верный id у user = {}", userId);
-            throw new NotFoundException("Не верный id " + userId);
+            throw new NotFoundException("Не корректно введен id " + userId);
         }
         if (friendId < 0) {
             log.warn("Не верный id у friendId = {}", friendId);
-            throw new NotFoundException("Не верный id " + friendId);
+            throw new NotFoundException("Не корректно введен id у friendId " + friendId);
         }
     }
 }

@@ -12,7 +12,7 @@ import ru.yandex.practicum.filmorate.exception.ValidationException;
 @Slf4j
 public class ErrorHandler {
     @ExceptionHandler
-    public ResponseEntity<?>  handleNotFoundException(final NotFoundException e) {
+    public ResponseEntity<?> handleNotFoundException(final NotFoundException e) {
         log.warn("404 {}", e.getMessage(), e);
         return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
     }
