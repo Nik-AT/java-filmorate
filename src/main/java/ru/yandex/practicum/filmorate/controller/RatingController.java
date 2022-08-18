@@ -14,13 +14,12 @@ import java.util.List;
 @RestController
 public class RatingController {
     private final RatingService ratingService;
+    private static final Logger log = LoggerFactory.getLogger(RatingController.class);
 
     @Autowired
     public RatingController(RatingService ratingService) {
         this.ratingService = ratingService;
     }
-
-    private static final Logger log = LoggerFactory.getLogger(RatingController.class);
 
     @GetMapping("/mpa/{id}")
     public Rating getRatingById(@PathVariable int id) {

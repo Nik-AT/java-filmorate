@@ -16,13 +16,12 @@ import java.util.List;
 public class UserController {
 
     final UserService userService;
+    private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
     }
-
-    private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     @PostMapping("/users")
     public User createUser(@RequestBody User user) {

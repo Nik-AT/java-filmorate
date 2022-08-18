@@ -8,8 +8,6 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Rating;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.films.FilmDb;
-import ru.yandex.practicum.filmorate.storage.films.GenreDb;
-import ru.yandex.practicum.filmorate.storage.films.RatingDb;
 import ru.yandex.practicum.filmorate.storage.users.UserDb;
 
 import java.time.LocalDate;
@@ -21,9 +19,7 @@ class FilmControllerTest {
     @Test
     void validationToBeNameIsEmpty() {
         FilmController filmController = new FilmController(new FilmService
-                (new FilmDb(new JdbcTemplate(),
-                        new GenreDb(new JdbcTemplate()),
-                        new RatingDb(new JdbcTemplate())),
+                (new FilmDb(new JdbcTemplate()),
                         new UserDb(new JdbcTemplate())));
         Film film = new Film(1, "", "description1", LocalDate
                 .of(1990, 10, 10), 100, new Rating());
@@ -33,9 +29,7 @@ class FilmControllerTest {
     @Test
     void validationIfDescriptionMoreThen200Character() {
         FilmController filmController = new FilmController(new FilmService
-                (new FilmDb(new JdbcTemplate(),
-                        new GenreDb(new JdbcTemplate()),
-                        new RatingDb(new JdbcTemplate())),
+                (new FilmDb(new JdbcTemplate()),
                         new UserDb(new JdbcTemplate())));
         Film film = new Film(1, "film1", "Suspected graceful diverted feel humanity education " +
                 "chapter moment basket done sure basket felt could bed. Dull jointure life stairs oppose sociable " +
@@ -47,9 +41,7 @@ class FilmControllerTest {
     @Test
     void validationIfLocalDateIsBefore1895_12_28() {
         FilmController filmController = new FilmController(new FilmService
-                (new FilmDb(new JdbcTemplate(),
-                        new GenreDb(new JdbcTemplate()),
-                        new RatingDb(new JdbcTemplate())),
+                (new FilmDb(new JdbcTemplate()),
                         new UserDb(new JdbcTemplate())));
         Film film = new Film(1, "film1", "description1", LocalDate
                 .of(1895, 12, 27), 100, new Rating());
@@ -60,9 +52,7 @@ class FilmControllerTest {
     @Test
     void validationIfDurationIsNegative() {
         FilmController filmController = new FilmController(new FilmService
-                (new FilmDb(new JdbcTemplate(),
-                        new GenreDb(new JdbcTemplate()),
-                        new RatingDb(new JdbcTemplate())),
+                (new FilmDb(new JdbcTemplate()),
                         new UserDb(new JdbcTemplate())));
         Film film = new Film(1, "film1", "description1", LocalDate
                 .of(1990, 10, 10), -1, new Rating());
@@ -72,9 +62,7 @@ class FilmControllerTest {
     @Test
     void validationIfIdIsNegative() {
         FilmController filmController = new FilmController(new FilmService
-                (new FilmDb(new JdbcTemplate(),
-                        new GenreDb(new JdbcTemplate()),
-                        new RatingDb(new JdbcTemplate())),
+                (new FilmDb(new JdbcTemplate()),
                         new UserDb(new JdbcTemplate())));
         Film film = new Film(-1, "film1", "description1", LocalDate
                 .of(1990, 10, 10), 100, new Rating());

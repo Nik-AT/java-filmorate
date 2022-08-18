@@ -4,27 +4,27 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.storage.films.GenreDb;
+import ru.yandex.practicum.filmorate.storage.films.GenreStorage;
 
 import java.util.List;
 
 @Service
 public class GenreService {
-    private final GenreDb genreDb;
+    private final GenreStorage genreStorage;
 
     @Autowired
-    public GenreService(GenreDb genreDb) {
-        this.genreDb = genreDb;
+    public GenreService(GenreStorage genreStorage) {
+        this.genreStorage = genreStorage;
     }
 
     public Genre getGenreById(Integer id) {
-        if (id < 0 || id > 6) {
+        if (id < 0) {
             throw new NotFoundException("Жанр с ИД: " + id + " не существует");
         }
-        return genreDb.getGenreById(id);
+        return genreStorage.getGenreById(id);
     }
 
     public List<Genre> getAllGenre() {
-        return genreDb.getAllGenre();
+        return genreStorage.getAllGenre();
     }
 }

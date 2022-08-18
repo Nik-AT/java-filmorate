@@ -14,13 +14,12 @@ import java.util.List;
 @RestController
 public class GenreController {
     private final GenreService genreService;
+    private static final Logger log = LoggerFactory.getLogger(GenreController.class);
 
     @Autowired
     public GenreController(GenreService genreService) {
         this.genreService = genreService;
     }
-
-    private static final Logger log = LoggerFactory.getLogger(GenreController.class);
 
     @GetMapping("/genres/{id}")
     public Genre getGenreById(@PathVariable int id) {

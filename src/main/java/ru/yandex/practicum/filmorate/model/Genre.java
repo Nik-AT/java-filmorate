@@ -10,7 +10,7 @@ import lombok.ToString;
 @ToString
 public class Genre {
     private Integer id;
-    private GENRES name;
+    private String name;
 
     @JsonCreator
     public Genre(Integer id) {

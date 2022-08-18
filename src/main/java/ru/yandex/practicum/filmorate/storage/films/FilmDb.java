@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Rating;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -19,15 +20,10 @@ import java.util.List;
 public class FilmDb implements FilmStorage {
 
     private final JdbcTemplate jdbcTemplate;
-    private final GenreDb genreDb;
-    private final RatingDb ratingDao;
 
     @Autowired
-    public FilmDb(JdbcTemplate jdbcTemplate, GenreDb genreDb, RatingDb ratingDao) {
+    public FilmDb(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-        this.genreDb = genreDb;
-        this.ratingDao = ratingDao;
-
     }
 
     @Override
@@ -49,7 +45,7 @@ public class FilmDb implements FilmStorage {
         sqlQuery = "SELECT FILM_ID FROM FILMS ORDER BY FILM_ID DESC LIMIT 1";
         Long filmId = jdbcTemplate.queryForObject(sqlQuery, Long.class);
         if (film.getGenres() != null) {
-            genreDb.saveGenres(film.getGenres(), filmId);
+            saveGenres(film.getGenres(), filmId);
         }
         film.setId(filmId);
         return getFilmById(filmId);
@@ -67,7 +63,7 @@ public class FilmDb implements FilmStorage {
                 film.getMpa().getId(),
                 film.getId());
         if (film.getGenres() != null) {
-            genreDb.updateGenres(film);
+            updateGenres(film);
         }
         Film filmById = getFilmById(film.getId());
         if (film.getGenres() != null && filmById.getGenres() == null) {
@@ -107,18 +103,50 @@ public class FilmDb implements FilmStorage {
         LocalDate releaseDate = rs.getDate("RELEASE_DATE").toLocalDate();
         Integer duration = rs.getInt("DURATION");
         Integer ratingId = rs.getInt("RATING_ID");
-        Rating mpa = ratingDao.getRatingById(ratingId);
+        Rating mpa = jdbcTemplate.queryForObject("SELECT * FROM RATING_MPA WHERE RATING_ID = ?",
+                (rs1, rowNum) -> new Rating(rs1.getInt("RATING_ID"),
+                        rs1.getString("RATING_MPA_NAME")), ratingId);
         Film makeFilm = new Film(id, name, description, releaseDate, duration, mpa);
         makeFilm.getUserIdLike().addAll(allLikes(id));
-        if (!genreDb.makeFilmGenres(id).isEmpty()) {
-            makeFilm.setGenres(genreDb.makeFilmGenres(id));
+        if (!makeFilmGenres(id).isEmpty()) {
+            makeFilm.setGenres(makeFilmGenres(id));
         }
         return makeFilm;
     }
 
-    public List<Long> allLikes(Integer filmId) {
+    private List<Long> allLikes(Integer filmId) {
         String sqlQuery = "SELECT USER_ID FROM LIKES  WHERE FILM_ID = ?";
         return jdbcTemplate.queryForList(sqlQuery, Long.class, filmId);
     }
 
+    private void updateGenres(Film film) {
+        String sqlQuery = "DELETE FROM GENRE_FILM WHERE FILM_ID = ?";
+        jdbcTemplate.update(sqlQuery, film.getId());
+        if (!film.getGenres().isEmpty()) {
+            saveGenres(film.getGenres(), film.getId());
+        }
+    }
+
+    private void saveGenres(List<Genre> genres, long filmId) {
+        String sqlQuery = "MERGE INTO GENRE_FILM (FILM_ID, GENRE_ID) KEY (FILM_ID, GENRE_ID) " +
+                "VALUES (?, ?)";
+        genres.forEach(s -> jdbcTemplate.update(sqlQuery, filmId, s.getId()));
+    }
+
+    private List<Genre> makeFilmGenres(Integer filmId) {
+        String sqlQuery = "SELECT GENRE_ID FROM GENRE_FILM WHERE FILM_ID=?";
+        List<Genre> list = new ArrayList<>();
+        for (Integer integer : jdbcTemplate.queryForList(sqlQuery, Integer.class, filmId)) {
+            Genre genreById = jdbcTemplate.queryForObject("SELECT * FROM GENRES where GENRE_ID = ?",
+                    (rs, rowNum) -> {
+                        Integer id = rs.getInt("GENRE_ID");
+                        String name = rs.getString("NAME");
+                        Genre makeGenre = new Genre(id);
+                        makeGenre.setName(name);
+                        return makeGenre;
+                    }, integer);
+            list.add(genreById);
+        }
+        return list;
+    }
 }

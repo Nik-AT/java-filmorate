@@ -16,13 +16,12 @@ import java.util.List;
 public class FilmController {
 
     private final FilmService filmService;
+    private static final Logger log = LoggerFactory.getLogger(FilmController.class);
 
     @Autowired
     public FilmController(FilmService filmService) {
         this.filmService = filmService;
     }
-
-    private static final Logger log = LoggerFactory.getLogger(FilmController.class);
 
     @GetMapping("/films")
     public List<Film> getFilm() {
