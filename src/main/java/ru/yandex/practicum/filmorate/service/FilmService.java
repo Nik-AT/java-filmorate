@@ -5,14 +5,10 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.storage.films.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.users.UserStorage;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,9 +19,9 @@ public class FilmService {
     private final UserStorage userStorage;
 
     @Autowired
-    public FilmService(InMemoryFilmStorage inMemoryFilmStorage, InMemoryUserStorage inMemoryUserStorage) {
-        this.filmStorage = inMemoryFilmStorage;
-        this.userStorage = inMemoryUserStorage;
+    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
+        this.filmStorage = filmStorage;
+        this.userStorage = userStorage;
     }
 
     public List<Film> getFilm() {
@@ -38,10 +34,6 @@ public class FilmService {
 
     public Film updateFilm(Film film) {
         return filmStorage.updateFilm(film);
-    }
-
-    public Map<Long, Film> getFilmMap() {
-        return filmStorage.getFilms();
     }
 
     public void addLikeToFilm(long id, long userId) {
@@ -77,7 +69,7 @@ public class FilmService {
     }
 
     public List<Film> popularFilm(Integer count) {
-        ArrayList<Film> film = filmStorage.getFilm();
+        List<Film> film = filmStorage.getFilm();
         return film
                 .stream()
                 .sorted(((o1, o2) -> o2.getUserIdLike().size() - o1.getUserIdLike().size()))

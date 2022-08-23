@@ -4,10 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.storage.users.UserStorage;
 
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -28,10 +28,6 @@ public class UserService {
 
     public List<User> getUser() {
         return userStorage.getUsers();
-    }
-
-    public Map<Long, User> getUserMap() {
-        return userStorage.getUserMap();
     }
 
     public User getUserById(long userId) {
@@ -68,10 +64,25 @@ public class UserService {
 
     public List<User> getUsersByFriend(long id) {
         User userById = userStorage.getUserById(id);
-        return userStorage.getUsersByFriend(userById);
+        List<Long> friends = userStorage.getUsersByFriend(userById.getId());
+        return userStorage.getUsers()
+                .stream()
+                .filter(user -> friends.contains(user.getId()))
+                .collect(Collectors.toList());
     }
 
     public List<User> getFriendCommonByOther(long id, long otherId) {
-        return userStorage.getFriendCommonByOther(id, otherId);
+        User userById = userStorage.getUserById(id);
+        User otherUserById = userStorage.getUserById(otherId);
+        List<Long> userFriends = userStorage.getUsersByFriend(userById.getId());
+        List<Long> otherUserFriends = userStorage.getUsersByFriend(otherUserById.getId());
+        List<Long> commonFriends = userFriends
+                .stream()
+                .filter(otherUserFriends::contains)
+                .collect(Collectors.toList());
+        List<User> userList = userStorage.getUsers();
+        return userList.stream()
+                .filter(user -> commonFriends.contains(user.getId()))
+                .collect(Collectors.toList());
     }
 }

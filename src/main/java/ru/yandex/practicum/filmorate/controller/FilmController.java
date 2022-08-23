@@ -16,13 +16,12 @@ import java.util.List;
 public class FilmController {
 
     private final FilmService filmService;
+    private static final Logger log = LoggerFactory.getLogger(FilmController.class);
 
     @Autowired
     public FilmController(FilmService filmService) {
         this.filmService = filmService;
     }
-
-    private static final Logger log = LoggerFactory.getLogger(FilmController.class);
 
     @GetMapping("/films")
     public List<Film> getFilm() {
@@ -32,6 +31,7 @@ public class FilmController {
 
     @GetMapping("/films/{id}")
     public Film getFilmById(@PathVariable long id) {
+        validationGetByFilmId(id);
         log.info("Фильм с ИД: {}", filmService.getFilm());
         return filmService.getFilmById(id);
     }
@@ -58,6 +58,7 @@ public class FilmController {
 
     @DeleteMapping("/films/{id}/like/{userId}")
     public void deleteLike(@PathVariable long id, @PathVariable long userId) {
+        validationDelete(id, userId);
         log.info(String.format("Фильм с ИД %d лайкнул пользователя с ИД %d", id, userId));
         filmService.deleteLike(id, userId);
     }
@@ -88,8 +89,26 @@ public class FilmController {
     }
 
     protected void validationToUpdateFilm(Film film) {
-        if (!(filmService.getFilmMap().containsKey(film.getId()))) {
+        if (film.getId() < 0) {
             log.warn("Не верный id = {}", film);
+            throw new NotFoundException("Не корректно введен id " + film.getId());
+        }
+    }
+
+    protected void validationGetByFilmId(long id) {
+        if (id < 0) {
+            log.warn("Не верный id = {}", id);
+            throw new NotFoundException("Не верный id");
+        }
+    }
+
+    private void validationDelete(long id, long userId) {
+        if (id < 0) {
+            log.warn("Не верный id фильма = {}", id);
+            throw new NotFoundException("Не верный id");
+        }
+        if (userId < 0) {
+            log.warn("Не верный id user = {}", userId);
             throw new NotFoundException("Не верный id");
         }
     }
